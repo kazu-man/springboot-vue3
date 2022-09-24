@@ -1,3 +1,16 @@
+//追加
+buildscript {
+	ext {
+		dockerComposePluginVersion = "0.15.0"
+	}
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath "com.avast.gradle:gradle-docker-compose-plugin:${dockerComposePluginVersion}"
+	}
+}
 plugins {
 	id 'org.springframework.boot' version '2.7.4'
 	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
@@ -31,4 +44,11 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//追加
+apply plugin: "docker-compose"
+//追加
+dockerCompose {
+	useComposeFiles = ["docker/docker-compose.yml"]
 }
