@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  backgend:
+  springboot:
     container_name: springboot
     image: openjdk:11-slim
     ports:
@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: zenn
       POSTGRES_DB: zenn
 
-  frontend:
+  vuejs:
     container_name: vuejs
     # ../vuejsのDockerfileにあるproduction-stageを指定
     build:
