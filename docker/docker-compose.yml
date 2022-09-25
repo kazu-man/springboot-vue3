@@ -1,13 +1,36 @@
 version: '3.7'
 services:
+  backgend:
+    container_name: springboot
+    image: openjdk:11-slim
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgre
+    volumes:
+      - '../build/libs/app.jar:/tmp/app.jar'
+    entrypoint: 'java -Dspring.profiles.active=production -jar /tmp/app.jar'
+
   postgre:
     image: postgres:latest
     ports:
       - 5432:5432
-    container_name: zenn_postgre
+    container_name: postgre
     volumes:
       - ./data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: zenn
       POSTGRES_PASSWORD: zenn
       POSTGRES_DB: zenn
+
+  frontend:
+    container_name: vuejs
+    # ../vuejsのDockerfileにあるproduction-stageを指定
+    build:
+      context: ../vuejs
+      target: production-stage
+    ports:
+      - 80:80
+    volumes:
+      - ../vuejs:/project
+      - /project/node_modules

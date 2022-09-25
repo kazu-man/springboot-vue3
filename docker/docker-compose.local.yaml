@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  # ローカル起動の場合はDBだけ立ち上げる
+  postgre:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    container_name: postgre
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: zenn
+      POSTGRES_PASSWORD: zenn
+      POSTGRES_DB: zenn
