@@ -2,11 +2,14 @@ package com.group.sampleproject.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,16 +17,16 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group.sampleproject.entity.Token;
 import com.group.sampleproject.payload.request.LoginForm;
+import com.group.sampleproject.service.TokenService;
 
 public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
     
-    public JsonAuthenticationFilter(AuthenticationManager authenticationManager){
+    public JsonAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService){
     
         // AuthenticationManagerの設定
         this.authenticationManager = authenticationManager;
@@ -36,13 +39,26 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     
         // ログイン成功時はtokenを発行してレスポンスにセットする
         this.setAuthenticationSuccessHandler((req,res,ex) -> {
+
+            Calendar cal = Calendar.getInstance();
+
+            cal.setTime(new Date());
+            cal.add(Calendar.MINUTE, 1);
+            Date tokenExTime = cal.getTime();
+            cal.add(Calendar.MINUTE, 5);
+            Date refreshTokenExTime = cal.getTime();
+            
             // // トークンの作成
-            String token = JWT.create()
-                    .withIssuer("com.volkruss.toaru") //発行者
-                    .withClaim("username", ex.getName()) //keyに対してvalueの設定。汎用的な様々な値を保持できる
-                    .sign(Algorithm.HMAC256("secret")); // 利用アルゴリズムを指定してJWTを新規作成
+            String token = tokenService.generateToken(ex.getName(), tokenExTime);
+            // // リフレッシュトークンの作成
+            String refreshToken = tokenService.generateToken(ex.getName(), refreshTokenExTime);
+                    
             res.setHeader("X-AUTH-TOKEN", token); // tokeをX-AUTH-TOKENというKeyにセットする
             res.setStatus(200);
+
+            //refreshToken　の保存
+            Token newTokenEntity = new Token(token, refreshToken);
+            tokenService.createToken(newTokenEntity);
         });
     
         // ログイン失敗時
@@ -54,7 +70,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            ServletInputStream stream = request.getInputStream();
             // リクエストのjsonの値をLoginFormにマッピングします。
             LoginForm form = new ObjectMapper().readValue(request.getInputStream(), LoginForm.class);
             // これでデフォルトのProviderを利用しつつ、ユーザーレコードの取得に関してはUserDetailsServiceの実装クラスのloadUserByUsernameを利用する

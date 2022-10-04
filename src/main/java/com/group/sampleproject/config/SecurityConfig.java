@@ -1,5 +1,6 @@
 package com.group.sampleproject.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -8,9 +9,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.group.sampleproject.service.TokenService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+
+    @Autowired
+    TokenService tokenservice;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(this.corsConfigurationSource());
@@ -23,8 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers("/api/**").authenticated();
         // 独自フィルターの利用
         // デフォルトのAuthenticationManagerを利用する
-        http.addFilter(new JsonAuthenticationFilter(authenticationManager()));
-        http.addFilterAfter(new LoginFilter(),JsonAuthenticationFilter.class);
+        http.addFilter(new JsonAuthenticationFilter(authenticationManager(),tokenservice));
+        http.addFilterAfter(new LoginFilter(tokenservice),JsonAuthenticationFilter.class);
         // csrfを無効にしておく
         // またCookieを利用してcsrf対策を行う
         http.csrf().ignoringAntMatchers("/api/**");
