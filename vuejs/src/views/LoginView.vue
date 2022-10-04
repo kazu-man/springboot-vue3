@@ -20,19 +20,21 @@
       </form>
     </template>
   </Card>
+  <LoginStateCheckVue />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref } from "vue";
 import InputText from "primevue/inputtext";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import axios from "axios";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
+import LoginStateCheckVue from "../components/LoginStateCheck.vue";
 
 export default defineComponent({
-  components: { InputText, Card, Button },
+  components: { InputText, Card, Button, LoginStateCheckVue },
   setup() {
     const userName = ref("");
     const password = ref("");

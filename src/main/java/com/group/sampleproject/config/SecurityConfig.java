@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         // 独自フィルターの利用
         // デフォルトのAuthenticationManagerを利用する
         http.addFilter(new JsonAuthenticationFilter(authenticationManager()));
+        http.addFilterAfter(new LoginFilter(),JsonAuthenticationFilter.class);
         // csrfを無効にしておく
         // またCookieを利用してcsrf対策を行う
         http.csrf().ignoringAntMatchers("/api/**");

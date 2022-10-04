@@ -33,4 +33,8 @@ public class SampleController {
         UserEntity userEntity = this.userRepository.findByName("zenn");
         return userEntity.toUser();
     }
+    @GetMapping("/api/test")
+    public String test(){
+        return "認証が成功しています";
+    }	
 }
