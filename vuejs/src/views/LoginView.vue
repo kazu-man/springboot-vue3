@@ -23,17 +23,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import InputText from "primevue/inputtext";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import axios from "axios";
+import { useStore } from "../store";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: { InputText, Card, Button },
   setup() {
     const userName = ref("");
     const password = ref("");
+    const store = useStore();
+    const router = useRouter();
 
     const submit = () => {
       axios
@@ -43,6 +47,10 @@ export default defineComponent({
         })
         .then((res) => {
           console.log(res);
+          store.commit("saveToken", res.headers["x-auth-token"]);
+
+          // ホームに戻す
+          router.push("/");
         })
         .catch((e) => {
           alert("ログインに失敗しました");
@@ -50,7 +58,11 @@ export default defineComponent({
         });
     };
 
-    return { userName, password, submit };
+    return {
+      userName,
+      password,
+      submit,
+    };
   },
 });
 </script>
