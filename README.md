@@ -4,6 +4,8 @@
 - gradle
 - docker, docker-compose
 - vue3
+- vue-router4
+- prime vue
 - postgreSQL
 
 - 参考サイト

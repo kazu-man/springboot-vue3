@@ -16,5 +16,19 @@ module.exports = {
   //     sourceType: "module", // "eslint:recommended"内のeslint-plugin-vueなどが同じものを定義するので削除
   //   },
   plugins: ["vue", "@typescript-eslint"],
-  rules: {},
+  rules: {
+    "vue/no-reserved-component-names": [
+      "off",
+      {
+        disallowVueBuiltInComponents: false,
+        disallowVue3BuiltInComponents: false,
+      },
+    ],
+    "vue/multi-word-component-names": [
+      "off",
+      {
+        ignores: [],
+      },
+    ],
+  },
 };
