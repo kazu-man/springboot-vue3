@@ -2,14 +2,14 @@ version: '3.7'
 services:
   springboot:
     container_name: springboot
-    image: openjdk:11-slim
     ports:
       - '8080:8080'
     depends_on:
       - postgres
-    volumes:
-      - '../build/libs/app.jar:/tmp/app.jar'
-    entrypoint: 'java -Dspring.profiles.active=production -jar /tmp/app.jar'
+    build:
+      context: ../
+      target: production-stage
+    tty: true
 
   postgres:
     image: postgres:latest
@@ -31,6 +31,3 @@ services:
       target: production-stage
     ports:
       - 80:80
-    volumes:
-      - ../vuejs:/project
-      - /project/node_modules
