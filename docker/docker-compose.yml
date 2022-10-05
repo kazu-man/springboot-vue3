@@ -6,16 +6,16 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - postgre
+      - postgres
     volumes:
       - '../build/libs/app.jar:/tmp/app.jar'
     entrypoint: 'java -Dspring.profiles.active=production -jar /tmp/app.jar'
 
-  postgre:
+  postgres:
     image: postgres:latest
     ports:
       - 5432:5432
-    container_name: postgre
+    container_name: postgres
     volumes:
       - ./data:/var/lib/postgresql/data
     environment:
