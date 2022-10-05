@@ -57,3 +57,14 @@ apply plugin: "docker-compose"
 dockerCompose {
 	useComposeFiles = ["docker/docker-compose.yml"]
 }
+
+task devComposeUp(group: 'docker', description: 'create container for development',type:Exec) {
+	workingDir './docker'
+	commandLine("docker-compose", "-f","docker-compose.local.yaml","up")
+}
+
+task runNpmServe(group: 'application', description: 'create container for development',type:Exec) {
+	workingDir './vuejs'
+	commandLine("npm", "run","serve")
+}
+
