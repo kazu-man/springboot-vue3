@@ -6,6 +6,23 @@
   </nav>
   <router-view />
 </template>
+<script lang="ts">
+import { defineComponent, onMounted } from "vue";
+import { useCookies } from "vue3-cookies";
+import { useStore } from "./store";
+
+export default defineComponent({
+  setup() {
+    const { cookies } = useCookies();
+    const store = useStore();
+    //cookieに保存されているtokenを取り出す
+    onMounted(() => {
+      let tokenInCookie = cookies.get("token");
+      store.commit("saveToken", tokenInCookie);
+    });
+  },
+});
+</script>
 
 <style>
 #app {

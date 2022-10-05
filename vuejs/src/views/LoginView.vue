@@ -32,6 +32,7 @@ import axios from "axios";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
 import LoginStateCheckVue from "../components/LoginStateCheck.vue";
+import { useCookies } from "vue3-cookies";
 
 export default defineComponent({
   components: { InputText, Card, Button, LoginStateCheckVue },
@@ -40,6 +41,7 @@ export default defineComponent({
     const password = ref("");
     const store = useStore();
     const router = useRouter();
+    const { cookies } = useCookies();
 
     const submit = () => {
       axios
@@ -48,8 +50,9 @@ export default defineComponent({
           password: password.value,
         })
         .then((res) => {
-          console.log(res);
-          store.commit("saveToken", res.headers["x-auth-token"]);
+          const newToken = res.headers["x-auth-token"];
+          store.commit("saveToken", newToken);
+          cookies.set("token", newToken);
 
           // ホームに戻す
           router.push("/");
