@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             // 認可があればここで設定できる
             // org.springframework.security.core.userdetails.Userにして返却する
             // パスワードエンコーダを利用してパスワードはエンコードをかける
-            return new User(entity.getName(), PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(entity.getPassword()), new ArrayList<>());
+            return new User(entity.getUsername(), PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(entity.getPassword()), new ArrayList<>());
         }catch (Exception e) {
             throw new UsernameNotFoundException("ユーザーが見つかりません");
         }

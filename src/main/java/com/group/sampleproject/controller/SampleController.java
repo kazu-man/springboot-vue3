@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.group.sampleproject.entity.AttendanceEntity;
 import com.group.sampleproject.entity.UserEntity;
 import com.group.sampleproject.model.SampleObject;
-import com.group.sampleproject.model.User;
 import com.group.sampleproject.payload.request.SampleForm;
+import com.group.sampleproject.repository.AttendanceRepository;
 import com.group.sampleproject.repository.UserRepository;
 
 @RestController
@@ -17,6 +18,8 @@ public class SampleController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AttendanceRepository attendanceRepository;
 
     @PostMapping("/sample")
     public SampleObject post(@RequestBody SampleForm sampleForm){
@@ -28,11 +31,19 @@ public class SampleController {
     }
 
     // 追加
-    @GetMapping("/test")
-    public User get(){
+    @GetMapping("/testA")
+    public UserEntity get(){
         UserEntity userEntity = this.userRepository.findByName("zenn");
-        return userEntity.toUser();
+        return userEntity;
     }
+
+    // 追加
+    @GetMapping("/testB")
+    public AttendanceEntity getAttendance(){
+        AttendanceEntity attendanceEntity = this.attendanceRepository.findById(1);
+        return attendanceEntity;
+    }
+    
     @GetMapping("/api/test")
     public String test(){
         return "認証が成功しています";
