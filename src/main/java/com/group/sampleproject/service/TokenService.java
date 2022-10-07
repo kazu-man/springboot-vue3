@@ -1,5 +1,6 @@
 package com.group.sampleproject.service;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,22 @@ public class TokenService {
         tokenRepository.createToken(token);
 
     }
+
     public void deleteToken(Token token){
         tokenRepository.deleteToken(token);
     }
+
     public Token findByToken(String token){
         return tokenRepository.findByToken(token);
+    }
+
+    public Date getDatePlusMin(int min){
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(new Date());
+        cal.add(Calendar.MINUTE, min);
+        return cal.getTime();
     }
     
     

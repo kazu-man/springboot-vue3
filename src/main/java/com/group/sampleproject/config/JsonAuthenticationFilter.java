@@ -19,12 +19,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group.sampleproject.entity.Token;
 import com.group.sampleproject.payload.request.LoginForm;
 import com.group.sampleproject.service.TokenService;
+import com.group.sampleproject.service.UserService;
 
+
+//ログイン処理をフィルターで行う場合
+//データを持たせて返せない
 public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
     
-    public JsonAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService){
+    public JsonAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService,UserService userService){
     
         // AuthenticationManagerの設定
         this.authenticationManager = authenticationManager;
@@ -54,6 +58,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
             res.setHeader("X-AUTH-TOKEN", token); // tokeをX-AUTH-TOKENというKeyにセットする
             res.setStatus(200);
 
+    
             //refreshToken　の保存
             Token newTokenEntity = new Token(token, refreshToken);
             tokenService.createToken(newTokenEntity);
@@ -78,4 +83,4 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
             throw new RuntimeException(e);
         }
     }
-    }
+}

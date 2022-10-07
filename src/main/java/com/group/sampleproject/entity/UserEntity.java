@@ -2,6 +2,7 @@ package com.group.sampleproject.entity;
 
 import java.util.List;
 
+import com.group.sampleproject.model.LoginUserModel;
 import com.group.sampleproject.model.User;
 
 import lombok.Getter;
@@ -22,5 +23,9 @@ public class UserEntity {
 
     public User toUser(){
         return new User(username);
+    }
+
+    public LoginUserModel toLoginUserModel(){
+        return new LoginUserModel(username,email,role);
     }
 }

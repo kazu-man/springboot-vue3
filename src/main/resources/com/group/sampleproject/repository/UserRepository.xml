@@ -6,6 +6,7 @@
 
         SELECT
             u.id,
+            username,
             password,
             email,
             role,
@@ -23,7 +24,7 @@
         LEFT JOIN attendances as a ON u.id = a.user_id
         LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
         LEFT JOIN tags t ON t.id = ta.tag_id
-        WHERE u.name = #{name};
+        WHERE u.username = #{name};
 
     </select>
 
