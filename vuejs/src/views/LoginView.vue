@@ -51,9 +51,10 @@ export default defineComponent({
         })
         .then((res) => {
           const newToken = res.headers["x-auth-token"];
-          store.commit("saveToken", newToken);
+          store.commit("updateToken", newToken);
           cookies.set("token", newToken);
-          console.log(res.data);
+          store.commit("updateLoginUser", res.data);
+          cookies.set("loginUser", res.data);
           // ホームに戻す
           router.push("/");
         })

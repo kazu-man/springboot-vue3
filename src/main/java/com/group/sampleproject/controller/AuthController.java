@@ -1,7 +1,6 @@
 package com.group.sampleproject.controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ public class AuthController {
     public ResponseEntity<LoginUserModel> login(@RequestBody LoginForm form){
 
         Authentication authentication = null;
+        
         try{
             //認証処理
             authentication = authenticationManager.authenticate(

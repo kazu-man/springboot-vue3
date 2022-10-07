@@ -1,9 +1,11 @@
 // store.ts
+import { User } from "@/types/User";
 import { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
 
 export interface State {
   token: string;
+  loginUser?: User;
 }
 
 export const key: InjectionKey<Store<State>> = Symbol();
@@ -11,26 +13,36 @@ export const key: InjectionKey<Store<State>> = Symbol();
 export const store = createStore<State>({
   state: {
     token: "",
+    loginUser: undefined,
   },
   mutations: {
-    saveToken(state, token) {
+    updateToken(state, token) {
       state.token = token;
     },
-    removeToken(state) {
-      state.token = "";
+    updateLoginUser(state, loginUser) {
+      state.loginUser = loginUser;
     },
   },
   actions: {
-    saveToken({ commit }, token) {
-      commit("saveToken", token);
+    updateToken({ commit }, token) {
+      commit("updateToken", token);
     },
     removeToken({ commit }) {
-      commit("removeToken");
+      commit("updateToken", "");
+    },
+    updateLoginUser({ commit }, loginUser) {
+      commit("updateLoginUser", loginUser);
+    },
+    removeLoginUser({ commit }) {
+      commit("updateLoginUser", undefined);
     },
   },
   getters: {
     getToken(state) {
       return state.token;
+    },
+    getLoginUser(state) {
+      return state.loginUser;
     },
   },
 });
