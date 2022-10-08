@@ -92,3 +92,22 @@ INSERT INTO "tag_attendances" ("attendance_id","tag_id") VALUES (8,2);
 
 INSERT INTO "tag_attendances" ("attendance_id","tag_id") VALUES (1,3);
 
+
+
+
+        SELECT
+            a.id as attendance_id,
+            a.start_at as attendance_start_at,
+            a.finish_at as attendance_finish_at,
+            a.user_id as attendance_user_id,
+            a.comment as attendance_comment,
+            ta.id as tag_attendance_id,
+            ta.attendance_id as tag_attendance_tag_attendance_id,
+            ta.tag_id as tag_attendance_tag_id,
+            t.id as tag_id,
+            t.tag_name as tag_name
+        FROM users u
+        LEFT JOIN attendances as a ON u.id = a.user_id
+        LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
+        LEFT JOIN tags t ON t.id = ta.tag_id
+        WHERE u.id = 1;

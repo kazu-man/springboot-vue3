@@ -26,6 +26,6 @@ public class UserEntity {
     }
 
     public LoginUserModel toLoginUserModel(){
-        return new LoginUserModel(username,email,role);
+        return new LoginUserModel(id,username,email,role);
     }
 }

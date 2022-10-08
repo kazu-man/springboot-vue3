@@ -44,6 +44,9 @@ export const store = createStore<State>({
     getLoginUser(state) {
       return state.loginUser;
     },
+    getUserId(state) {
+      return state.loginUser ? state.loginUser.id : undefined;
+    },
   },
 });
 
