@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group.sampleproject.entity.AttendanceEntity;
+import com.group.sampleproject.entity.CustomUserDetail;
 import com.group.sampleproject.entity.UserEntity;
 import com.group.sampleproject.model.CalendarEventModel;
 import com.group.sampleproject.model.SampleObject;
@@ -61,10 +63,10 @@ public class SampleController {
      * @return List<CalendarEventModel>
      */
     @PostMapping("/api/attendanceByUserId")
-    public List<CalendarEventModel> attendanceByUserId(@RequestBody UserEntity user){
+    public List<CalendarEventModel> attendanceByUserId(@AuthenticationPrincipal CustomUserDetail loginUser,@RequestBody UserEntity user){
 
         List<AttendanceEntity> attendanceList = attendanceRepository.findByUserId(user.getId());
-        
+
         //vueで表示用のカレンダーデータモデルに変換する
         List<CalendarEventModel> calEvent = attendanceList.stream().map(AttendanceEntity::getCalendarEvent).collect(Collectors.toList());
         return calEvent;

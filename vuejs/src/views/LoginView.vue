@@ -50,9 +50,6 @@ export default defineComponent({
           password: password.value,
         })
         .then((res) => {
-          const newToken = res.headers["x-auth-token"];
-          store.commit("updateToken", newToken);
-          cookies.set("token", newToken);
           store.commit("updateLoginUser", res.data);
           cookies.set("loginUser", res.data);
           // ホームに戻す

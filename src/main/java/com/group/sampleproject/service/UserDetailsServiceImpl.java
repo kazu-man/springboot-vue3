@@ -1,15 +1,12 @@
 package com.group.sampleproject.service;
 
-import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
+import com.group.sampleproject.entity.CustomUserDetail;
 import com.group.sampleproject.entity.UserEntity;
 import com.group.sampleproject.repository.UserRepository;
 
@@ -23,9 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         try{
             UserEntity entity = userRepository.findByName(username);
             // 認可があればここで設定できる
-            // org.springframework.security.core.userdetails.Userにして返却する
-            // パスワードエンコーダを利用してパスワードはエンコードをかける
-            return new User(entity.getUsername(), PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(entity.getPassword()), new ArrayList<>());
+            //CustomUserDetailを使用する
+            return new CustomUserDetail (entity);
+            // return new User(entity.getUsername(), PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(entity.getPassword()), new ArrayList<>());
         }catch (Exception e) {
             throw new UsernameNotFoundException("ユーザーが見つかりません");
         }

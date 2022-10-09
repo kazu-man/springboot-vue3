@@ -42,6 +42,13 @@ onMounted(() => {
 });
 
 const addEvents = () => {
-  attendData.value = [{ id: 13, title: "NEW", start: "2022-10-02 12:00:00" }];
+  attendData.value = [
+    {
+      id: 13,
+      title: "NEW",
+      start: "2022-10-02 12:00:00",
+      end: "2022-10-02 13:00:00",
+    },
+  ];
 };
 </script>
