@@ -2,6 +2,9 @@ package com.group.sampleproject.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +22,8 @@ import com.group.sampleproject.entity.Token;
 import com.group.sampleproject.entity.UserEntity;
 import com.group.sampleproject.model.LoginUserModel;
 import com.group.sampleproject.payload.request.LoginForm;
+import com.group.sampleproject.payload.request.SignUpRequest;
+import com.group.sampleproject.payload.response.MessageResponse;
 import com.group.sampleproject.repository.UserRepository;
 import com.group.sampleproject.service.TokenService;
 
@@ -30,6 +36,8 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
     @Autowired
     TokenService tokenService;
+    @Autowired
+	BCryptPasswordEncoder encoder;
     
     @PostMapping("/api/login")
     public ResponseEntity<LoginUserModel> login(@RequestBody LoginForm form){
@@ -48,18 +56,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new LoginUserModel());
         }
         
-        // トークンの期限を取得
-        Date tokenExTime = tokenService.getDatePlusMin(1);
-        Date refreshTokenExTime = tokenService.getDatePlusMin(5);
-
-        // // トークンの作成
-        String token = tokenService.generateToken(authentication.getName(), tokenExTime);
-        // // リフレッシュトークンの作成
-        String refreshToken = tokenService.generateToken(authentication.getName(), refreshTokenExTime);
-                
-        //refreshToken　の保存
-        Token newTokenEntity = new Token(token, refreshToken);
-        tokenService.createToken(newTokenEntity);        
+        Map<String,String> tokens = tokenService.createNewTokens(authentication.getName());
+        String token = tokens.get("token");     
     
         //ヘッダーにトークンをセット
         HttpHeaders headers = new HttpHeaders();
@@ -71,4 +69,40 @@ public class AuthController {
         return ResponseEntity.ok().headers(headers).body(user.toLoginUserModel());
 
     }
+
+
+	@PostMapping("/api/signUp")
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+		if (userRepository.existsByUsername(signUpRequest.getUsername()) != null) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Username is already taken!"));
+		}
+		if (userRepository.existsByEmail(signUpRequest.getEmail()) != null) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already in use!"));
+		}
+		// Create new user's account
+		UserEntity user = new UserEntity(
+                                    signUpRequest.getUsername(), 
+                                    signUpRequest.getEmail(),
+                                    encoder.encode(signUpRequest.getPassword()),
+                                    signUpRequest.getRole()
+							 );
+		//ユーザーを保存
+        userRepository.save(user);
+        user = userRepository.findByName(user.getUsername());
+
+        //すぐログインできるようにトークンを生成
+        Map<String,String> tokens = tokenService.createNewTokens(signUpRequest.getUsername());
+        String token = tokens.get("token"); 
+
+        //ヘッダーにトークンをセット
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-AUTH-TOKEN", token);
+
+        //ログインユーザ情報をbodyに詰めて返却
+        return ResponseEntity.ok().headers(headers).body(user.toLoginUserModel());
+	}
 }

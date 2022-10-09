@@ -24,9 +24,30 @@
         LEFT JOIN attendances as a ON u.id = a.user_id
         LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
         LEFT JOIN tags t ON t.id = ta.tag_id
-        WHERE u.username = #{name};
+        WHERE u.username = #{username};
 
     </select>
+
+    <select id="existsByUsername" resultType="com.group.sampleproject.entity.UserEntity">
+        SELECT
+            *
+        FROM users u
+        WHERE u.username = #{username};
+    </select>
+
+    <select id="existsByEmail" resultType="com.group.sampleproject.entity.UserEntity">
+        SELECT
+            *
+        FROM users u
+        WHERE u.email = #{email};
+    </select>
+
+    <insert id="save">
+        INSERT INTO users 
+            (username,email,password,role)
+        VALUES 
+            (#{username},#{email},#{password},#{role});
+    </insert>
 
     <!-- 一括で書く場合
         <resultMap id="userResultMap" type="com.group.sampleproject.entity.UserEntity">

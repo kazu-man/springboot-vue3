@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -45,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/signUp").permitAll()
                 .antMatchers("/public/**").permitAll()
                 .antMatchers("/api/**").authenticated();
         
@@ -81,9 +83,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailService);
+        provider.setPasswordEncoder(new BCryptPasswordEncoder());
         //テスト用DBのパスワードがエンコードされてないのでテスト用に必ず認証できるエンコーダ
-        provider.setPasswordEncoder(new TestBCryptPasswordEncoder());
-        // provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        // provider.setPasswordEncoder(new TestBCryptPasswordEncoder());
         return provider;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

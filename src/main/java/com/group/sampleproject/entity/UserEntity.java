@@ -21,6 +21,13 @@ public class UserEntity {
     private String role;
     private List<AttendanceEntity> attendanceList;
 
+    public UserEntity(String username, String email, String password, String role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     public User toUser(){
         return new User(username);
     }
