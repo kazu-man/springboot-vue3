@@ -1,12 +1,16 @@
 package com.group.sampleproject.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,11 +69,33 @@ public class SampleController {
     @PostMapping("/api/attendanceByUserId")
     public List<CalendarEventModel> attendanceByUserId(@AuthenticationPrincipal CustomUserDetail loginUser,@RequestBody UserEntity user){
 
+        List<CalendarEventModel> calendarList = new ArrayList<>();
+        
         List<AttendanceEntity> attendanceList = attendanceRepository.findByUserId(user.getId());
+        //データが見つからない場合、1件目がnullのリストを返されるので対策
+        attendanceList.removeAll(Collections.singleton(null));  
 
-        //vueで表示用のカレンダーデータモデルに変換する
-        List<CalendarEventModel> calEvent = attendanceList.stream().map(AttendanceEntity::getCalendarEvent).collect(Collectors.toList());
-        return calEvent;
+        if(!attendanceList.isEmpty()){
+            //vueで表示用のカレンダーデータモデルに変換する
+            calendarList=  attendanceList.stream().map(AttendanceEntity::getCalendarEvent).collect(Collectors.toList());
+        }
 
+        return calendarList;
+    }
+
+    @PostMapping("/api/attendance")
+    public ResponseEntity<CalendarEventModel>  createAttendance(@AuthenticationPrincipal CustomUserDetail loginUser,@RequestBody CalendarEventModel event){
+        AttendanceEntity attendance = event.toAttendanceEntity(loginUser.getUserEntity());
+        attendanceRepository.createAttendance(attendance);
+
+        return ResponseEntity.ok().body(event);
+    }
+
+    @PutMapping("/api/attendance")
+    public ResponseEntity<CalendarEventModel>  updateAttendance(@AuthenticationPrincipal CustomUserDetail loginUser,@RequestBody CalendarEventModel event){
+        AttendanceEntity attendance = event.toAttendanceEntity(loginUser.getUserEntity());
+        attendanceRepository.updateAttendance(attendance);
+
+        return ResponseEntity.ok().body(event);
     }
 }

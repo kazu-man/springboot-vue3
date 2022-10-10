@@ -61,7 +61,7 @@ public class TokenService {
 
         // トークンの期限を取得
         Date tokenExTime = getDatePlusMin(1);
-        Date refreshTokenExTime = getDatePlusMin(5);
+        Date refreshTokenExTime = getDatePlusMin(60);
 
         // // トークンの作成
         String token = generateToken(username, tokenExTime);

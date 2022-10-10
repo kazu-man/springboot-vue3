@@ -65,12 +65,11 @@ import Card from "primevue/card";
 import Button from "primevue/button";
 import axios from "axios";
 import { useStore } from "../store";
-import { useRouter } from "vue-router";
-import LoginStateCheckVue from "../components/LoginStateCheck.vue";
+// import { useRouter } from "vue-router";
 import { useCookies } from "vue3-cookies";
 
 const store = useStore();
-const router = useRouter();
+// const router = useRouter();
 const { cookies } = useCookies();
 
 const newUser = ref({
@@ -85,7 +84,6 @@ const sendSignUp = () => {
   axios
     .post("http://localhost:8080/api/signUp", newUser.value)
     .then((res) => {
-      console.log("new user created");
       store.commit("updateLoginUser", res.data);
       cookies.set("loginUser", res.data);
     })

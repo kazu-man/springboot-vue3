@@ -50,4 +50,7 @@ public class CustomUserDetail implements UserDetails{
         return true;
     }
     
+    public UserEntity getUserEntity(){
+        return this.user;
+    }
 }

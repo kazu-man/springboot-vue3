@@ -10,4 +10,6 @@ import com.group.sampleproject.entity.AttendanceEntity;
 public interface AttendanceRepository {
     AttendanceEntity findById(int id);    
     List<AttendanceEntity> findByUserId(int userId);
+    void updateAttendance(AttendanceEntity attendanceEntity);
+    void createAttendance(AttendanceEntity attendanceEntity);
 }

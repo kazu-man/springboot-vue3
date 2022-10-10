@@ -2,10 +2,15 @@
   <div>
     <FullCalendar :options="options" />
   </div>
+  <EventRegisterModal
+    :selectedEvent="selectedEvent"
+    :showModal="showModal"
+    @closeModal="closeModal"
+  />
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, PropType, defineProps, defineEmits, Ref } from "vue";
+import { ref, toRefs, PropType, defineProps, Ref } from "vue";
 import "@fullcalendar/vue3";
 import FullCalendar, {
   CalendarOptions,
@@ -14,12 +19,13 @@ import FullCalendar, {
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import CalendarEvents from "../types/CalendarEvents";
+import CalendarEvent from "../types/CalendarEvent";
+import EventRegisterModal from "./EventRegisterModal/EventRegisterModal.vue";
 
 //propsの型定義
 type Props = {
   events: {
-    type: PropType<CalendarEvents[]>;
+    type: PropType<CalendarEvent[]>;
     required: true;
   };
 };
@@ -28,16 +34,21 @@ const props = defineProps<Props>();
 //propsからevetnsをrefにして取得
 const { events } = toRefs(props);
 
-//emitの型定義
-type Emits = {
-  (e: "addEvents"): void;
+const showModal = ref(false);
+const closeModal = () => {
+  showModal.value = false;
 };
-//emitをdefineEmitsから取得
-const emit = defineEmits<Emits>();
+const selectedEvent = ref({});
 
 //カレンダーのオプション設定
 const options: Ref<CalendarOptions> = ref({
-  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+  // timeZone: "UTC",
+  plugins: [
+    dayGridPlugin,
+    timeGridPlugin,
+    interactionPlugin,
+    // momentTimezonePlugin,
+  ],
   headerToolbar: {
     left: "prev,next today",
     center: "title",
@@ -49,12 +60,12 @@ const options: Ref<CalendarOptions> = ref({
   dayMaxEvents: true,
   events: events,
   eventClick: function (info: EventClickArg) {
-    alert("Event: " + info.event.title);
-    alert("Coordinates: " + info.jsEvent.pageX + "," + info.jsEvent.pageY);
-    alert("View: " + info.view.type);
-
-    // change the border color just for fun
-    info.el.style.borderColor = "red";
+    const popOvers = document.getElementsByClassName("fc-popover-close");
+    for (let popOverCloseBtn of popOvers) {
+      popOverCloseBtn.click();
+    }
+    showModal.value = true;
+    selectedEvent.value = info;
   },
   dateClick: function (info: EventClickArg) {
     // alert("Clicked on: " + info.dateStr);
@@ -62,7 +73,12 @@ const options: Ref<CalendarOptions> = ref({
     // alert("Current view: " + info.view.type);
     // // change the day's background color just for fun
     // info.dayEl.style.backgroundColor = "red";
-    emit("addEvents");
+    // emit("addEvents");
+    showModal.value = true;
+    selectedEvent.value = info;
+  },
+  eventDrop: function (info: EventClickArg) {
+    console.log(info);
   },
 });
 </script>

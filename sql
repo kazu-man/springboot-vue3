@@ -21,10 +21,12 @@ DROP TABLE IF EXISTS "attendances";
 CREATE TABLE "attendances" (
 	"id" SERIAL NOT NULL primary key,
 	"user_id" INTEGER NOT NULL,
-	"start_at" DATE default CURRENT_TIMESTAMP,
-	"finish_at" DATE default CURRENT_TIMESTAMP,
+	"start_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+	"finish_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+	"title" VARCHAR(255) DEFAULT NULL,
 	"comment" TEXT DEFAULT NULL
 );
+
 
 --タグテーブル
 DROP TABLE IF EXISTS "tags";
@@ -40,35 +42,6 @@ CREATE TABLE "tag_attendances" (
 	"attendance_id" INTEGER NOT NULL,
 	"tag_id" INTEGER NOT NULL
 );
-
-
--- 初期ユーザ
-INSERT INTO "users" ("username", "password","email","role") VALUES ('zenn', 'zenn','email','role');
-INSERT INTO "users" ("username", "password","email","role") VALUES ('zenn2', 'zenn2','email2','role');
-INSERT INTO "users" ("username", "password","email","role") VALUES ('zenn3', 'zenn3','email3','role');
-
-
--- 初期勤怠
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('1', 'testComment');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('1', 'testComment2');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('1', 'testComment2');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('1', 'testComment3');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('1', 'testComment4');
-
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('2', 'testComment');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('2', 'testComment2');
-
-
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment2');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment2');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment3');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment4');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment5');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment6');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment7');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment8');
-INSERT INTO "attendances" ("user_id", "comment") VALUES ('3', 'testComment9');
 
 -- 初期タグ
 INSERT INTO "tags" ("tag_name") VALUES ('first tag');
@@ -91,23 +64,3 @@ INSERT INTO "tag_attendances" ("attendance_id","tag_id") VALUES (7,2);
 INSERT INTO "tag_attendances" ("attendance_id","tag_id") VALUES (8,2);
 
 INSERT INTO "tag_attendances" ("attendance_id","tag_id") VALUES (1,3);
-
-
-
-
-        SELECT
-            a.id as attendance_id,
-            a.start_at as attendance_start_at,
-            a.finish_at as attendance_finish_at,
-            a.user_id as attendance_user_id,
-            a.comment as attendance_comment,
-            ta.id as tag_attendance_id,
-            ta.attendance_id as tag_attendance_tag_attendance_id,
-            ta.tag_id as tag_attendance_tag_id,
-            t.id as tag_id,
-            t.tag_name as tag_name
-        FROM users u
-        LEFT JOIN attendances as a ON u.id = a.user_id
-        LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
-        LEFT JOIN tags t ON t.id = ta.tag_id
-        WHERE u.id = 1;

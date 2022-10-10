@@ -2,6 +2,8 @@
 import { User } from "@/types/User";
 import { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 
 export interface State {
   token: string;
@@ -25,12 +27,14 @@ export const store = createStore<State>({
   },
   actions: {
     updateToken({ commit }, token) {
+      cookies.set("token", token);
       commit("updateToken", token);
     },
     removeToken({ commit }) {
       commit("updateToken", "");
     },
     updateLoginUser({ commit }, loginUser) {
+      cookies.set("loginUser", loginUser);
       commit("updateLoginUser", loginUser);
     },
     removeLoginUser({ commit }) {

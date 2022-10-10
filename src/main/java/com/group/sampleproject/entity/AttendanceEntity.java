@@ -1,26 +1,44 @@
 package com.group.sampleproject.entity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.group.sampleproject.model.CalendarEventModel;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AttendanceEntity {
+
+    static public final String DATE_PATTERN ="yyyy-MM-dd HH:mm:ss";
+
     private int id;
     private UserEntity userEntity;
     private Date startAt;
     private Date finishAt;
     private String comment;
     private List<TagEntity> tagEntityList;
-    static public final String DATE_PATTERN ="yyyy-MM-dd HH:mm:ss";
+    private String title;
+        
+    public AttendanceEntity(int id, Date startAt, Date finishAt, String comment, ArrayList<TagEntity> tagEntityList,
+            UserEntity userEntity,String title) {
 
-    
+        this.id = id;
+        this.startAt = startAt;
+        this.finishAt = finishAt;
+        this.comment = comment;
+        this.tagEntityList = tagEntityList;
+        this.userEntity = userEntity;
+        this.title = title;
+    }
     /** 
      * CalendarEventModelに変換して取得
      * @return CalendarEvent
@@ -29,9 +47,7 @@ public class AttendanceEntity {
 
         String stringStartAt = new SimpleDateFormat(DATE_PATTERN).format(startAt);
         String stringFinishtAt = new SimpleDateFormat(DATE_PATTERN).format(finishAt);
-        String title = "sample title";
-        String url = "sample.com";
 
-        return new CalendarEventModel(id,title,stringStartAt,stringFinishtAt,url);
+        return new CalendarEventModel(id,title,stringStartAt,stringFinishtAt,comment);
     }
 }

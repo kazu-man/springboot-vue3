@@ -37,6 +37,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        response.setStatus(401);
+
         // headerからTokenを取得する
         String authHeader = request.getHeader("X-AUTH-TOKEN");
 
@@ -64,6 +66,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             //tokenでrefreshTokenを検索
             Token tokenEntitity = tokenService.findByToken(token);
+            if (tokenEntitity == null) return;
+
             String refreshToken = tokenEntitity.getRefreshToken();
 
             //refreshTokenの検証
@@ -88,9 +92,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             tokenService.createToken(newTokenEntity);
 
             response.setHeader("X-AUTH-TOKEN", newToken); // tokeをX-AUTH-TOKENというKeyにセットする
-            response.setStatus(200);
-
+            
         }
+
+        response.setStatus(200);
 
         // ログイン状態を設定する
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
