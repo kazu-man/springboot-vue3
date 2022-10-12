@@ -11,6 +11,7 @@
             a.user_id as attendance_user_id,
             a.comment as attendance_comment,
             a.title as attendance_title,
+            a.background_color as attendance_background_color,
             ta.id as tag_attendance_id,
             ta.attendance_id as tag_attendance_tag_attendance_id,
             ta.tag_id as tag_attendance_tag_id,
@@ -28,15 +29,16 @@
             start_at = #{startAt},
             finish_at = #{finishAt},
             comment = #{comment},
-            title = #{title}
+            title = #{title},
+            background_color = #{backgroundColor}
         WHERE id = #{id}
     </update>
 
     <insert id="createAttendance">
         INSERT INTO attendances
-            (start_at,finish_at,comment,user_id,title)
+            (start_at,finish_at,comment,user_id,title,background_color)
         VALUES
-            (#{startAt},#{finishAt},#{comment},#{userEntity.id},#{title});
+            (#{startAt},#{finishAt},#{comment},#{userEntity.id},#{title},#{backgroundColor});
     </insert>
 
     <resultMap id="attendanceResultMap" type="com.group.sampleproject.entity.AttendanceEntity">
@@ -45,6 +47,7 @@
         <result property="finishAt" column="attendance_finish_at"/> 
         <result property="comment" column="attendance_comment"/> 
         <result property="title" column="attendance_title"/> 
+        <result property="backgroundColor" column="attendance_background_color"/> 
         
         <association property="tagEntityList" resultMap="tagResultMap" />
 
@@ -64,6 +67,7 @@
             a.user_id as attendance_user_id,
             a.comment as attendance_comment,
             a.title as attendance_title,
+            a.background_color as attendance_background_color,
             ta.id as tag_attendance_id,
             ta.attendance_id as tag_attendance_tag_attendance_id,
             ta.tag_id as tag_attendance_tag_id,

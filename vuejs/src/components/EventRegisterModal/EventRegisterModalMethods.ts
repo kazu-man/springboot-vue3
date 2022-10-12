@@ -3,6 +3,8 @@ import axios, { AxiosRequestHeaders } from "axios";
 import CalendarEvent from "../../types/CalendarEvent";
 import { Store } from "vuex";
 import { State } from "@/store";
+import EventFormMethods from "../EventForm/EventFormMethods";
+import { EventClickArg } from "@fullcalendar/vue3";
 
 export const closeEvent = (
   options: any,
@@ -50,7 +52,30 @@ export const updateEvent = async (
   return result;
 };
 
-const createEventFunc = async (
+export const moveEvent = async (info: EventClickArg, store: Store<State>) => {
+  const { event } = info;
+  const { updatedData } = EventFormMethods(event, undefined);
+  const result = await updateEvent(updatedData.value, store);
+  const toastInfo = {
+    summary: "",
+    detail: "",
+    severity: "",
+  };
+
+  if (result) {
+    toastInfo.summary = "Event Move";
+    toastInfo.detail = `${updatedData.value.start} ~ ${updatedData.value.end}`;
+    toastInfo.severity = "info";
+  } else {
+    toastInfo.summary = "Something went wrong..";
+    toastInfo.detail = "Failed to update the event";
+    toastInfo.severity = "danger";
+  }
+
+  return toastInfo;
+};
+
+export const createEventFunc = async (
   headers: AxiosRequestHeaders,
   newData: CalendarEvent
 ) => {
@@ -69,7 +94,7 @@ const createEventFunc = async (
   return result;
 };
 
-const updateEventFunc = async (
+export const updateEventFunc = async (
   headers: AxiosRequestHeaders,
   newData: CalendarEvent
 ) => {
@@ -87,3 +112,5 @@ const updateEventFunc = async (
     });
   return result;
 };
+
+export default { closeEvent, moveEvent, createEventFunc, updateEventFunc };

@@ -4,4 +4,5 @@ export default interface CalendarEvent {
   start: string;
   end?: string;
   comment?: string;
+  backgroundColor: string;
 }

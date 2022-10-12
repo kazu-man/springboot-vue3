@@ -27,9 +27,10 @@ public class AttendanceEntity {
     private String comment;
     private List<TagEntity> tagEntityList;
     private String title;
+    private String backgroundColor;
         
     public AttendanceEntity(int id, Date startAt, Date finishAt, String comment, ArrayList<TagEntity> tagEntityList,
-            UserEntity userEntity,String title) {
+            UserEntity userEntity,String title,String backgroundColor) {
 
         this.id = id;
         this.startAt = startAt;
@@ -38,6 +39,7 @@ public class AttendanceEntity {
         this.tagEntityList = tagEntityList;
         this.userEntity = userEntity;
         this.title = title;
+        this.backgroundColor = backgroundColor;
     }
     /** 
      * CalendarEventModelに変換して取得
@@ -48,6 +50,6 @@ public class AttendanceEntity {
         String stringStartAt = new SimpleDateFormat(DATE_PATTERN).format(startAt);
         String stringFinishtAt = new SimpleDateFormat(DATE_PATTERN).format(finishAt);
 
-        return new CalendarEventModel(id,title,stringStartAt,stringFinishtAt,comment);
+        return new CalendarEventModel(id,title,stringStartAt,stringFinishtAt,comment,backgroundColor);
     }
 }

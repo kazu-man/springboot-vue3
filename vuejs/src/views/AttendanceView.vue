@@ -1,5 +1,5 @@
 <template>
-  <Calendar :events="attendData" @addEvents="addEvents" />
+  <Calendar :events="attendData" />
 </template>
 
 <script lang="ts" setup>
@@ -31,7 +31,7 @@ const getAttendData = () => {
       headers: headers,
     })
     .then((res) => {
-      attendData.value = [attendData.value, ...res.data];
+      if (res.data) attendData.value = [...res.data];
     })
     .catch(() => {
       alert("fail to get attend data");

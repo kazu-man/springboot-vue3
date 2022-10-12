@@ -9,10 +9,10 @@
 import { h, watchEffect, toRefs, inject, defineComponent } from "vue";
 import { useDialog } from "primevue/usedialog";
 import { useToast } from "primevue/usetoast";
+import Toast from "primevue/toast";
 import Button from "primevue/button";
 import EventForm from "../EventForm/EventForm.vue";
 import DynamicDialog from "primevue/dynamicdialog";
-import Toast from "primevue/toast";
 import { closeEvent, updateEvent } from "./EventRegisterModalMethods";
 import CalendarEvent from "../../types/CalendarEvent";
 import { useStore } from "../../store";
@@ -46,6 +46,7 @@ export default defineComponent({
       start: "",
       end: "",
       comment: "",
+      backgroundColor: "",
     };
 
     const updateData = (data: CalendarEvent) => {

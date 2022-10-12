@@ -3,12 +3,7 @@
     <template #content>
       <form class="grid p-fluid m-8">
         <span class="p-float-label input-m">
-          <InputText
-            id="title"
-            type="text"
-            v-model="updatedData.title"
-            @change="setNewData"
-          />
+          <InputText id="title" type="text" v-model="updatedData.title" />
           <label for="title">Title</label>
         </span>
         <div class="field p-grid" style="width: 100%; margin: 0.5em 0 0 0">
@@ -43,6 +38,14 @@
           />
           <label for="comment">comment</label>
         </div>
+        <span class="p-float-label input-m">
+          <InputText
+            id="backgroundColor"
+            type="text"
+            v-model="updatedData.backgroundColor"
+          />
+          <label for="backgroundColor">Background Color</label>
+        </span>
       </form>
     </template>
   </Card>

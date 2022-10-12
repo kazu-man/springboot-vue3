@@ -24,6 +24,7 @@ CREATE TABLE "attendances" (
 	"start_at" timestamp DEFAULT CURRENT_TIMESTAMP,
 	"finish_at" timestamp DEFAULT CURRENT_TIMESTAMP,
 	"title" VARCHAR(255) DEFAULT NULL,
+	"background_color" VARCHAR(255) DEFAULT NULL,
 	"comment" TEXT DEFAULT NULL
 );
 

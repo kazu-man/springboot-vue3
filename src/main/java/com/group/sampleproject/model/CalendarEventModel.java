@@ -23,6 +23,7 @@ public class CalendarEventModel {
     private String start;
     private String end;    
     private String comment;
+    private String backgroundColor;
 
     /** 
      * CalendarEventModelに変換して取得
@@ -41,7 +42,7 @@ public class CalendarEventModel {
         } catch (Exception e) {
         }
 
-        return new AttendanceEntity(id,startDate,endDate,comment,new ArrayList<TagEntity>(),user,title);
+        return new AttendanceEntity(id,startDate,endDate,comment,new ArrayList<TagEntity>(),user,title,backgroundColor);
 
     }
 }

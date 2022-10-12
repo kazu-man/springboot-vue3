@@ -15,7 +15,7 @@ interface returnType {
 
 export default function EventFormMethods(
   event: EventApi,
-  dateStr: string
+  dateStr: string | undefined
 ): returnType {
   //v-model用の変数に詰め替える
   const updatedData = ref<CalendarEvent>({
@@ -24,10 +24,11 @@ export default function EventFormMethods(
     start: "",
     end: "",
     comment: "",
+    backgroundColor: "",
   });
 
-  const startDate = ref(new Date(dateStr));
-  const endDate = ref(new Date(dateStr));
+  const startDate = ref(dateStr ? new Date(dateStr) : new Date());
+  const endDate = ref(dateStr ? new Date(dateStr) : new Date());
 
   //更新の場合
   if (event) {
@@ -54,6 +55,7 @@ export default function EventFormMethods(
       start: "",
       end: "",
       comment: form.comment as string,
+      backgroundColor: form.ui.backgroundColor,
     };
   }
 

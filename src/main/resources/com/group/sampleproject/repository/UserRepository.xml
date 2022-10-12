@@ -16,6 +16,7 @@
             a.user_id as attendance_user_id,
             a.comment as attendance_comment,
             a.title as attendance_title,
+            a.background_color as attendance_background_color,
             ta.id as tag_attendance_id,
             ta.attendance_id as tag_attendance_tag_attendance_id,
             ta.tag_id as tag_attendance_tag_id,
@@ -90,6 +91,7 @@
         <result property="finishAt" column="attendance_finish_at"/> 
         <result property="comment" column="attendance_comment"/> 
         <result property="title" column="attendance_title"/> 
+        <result property="backgroundColor" column="attendance_background_color"/> 
         
         <association property="tagEntityList" resultMap="tagResultMap" />
 
