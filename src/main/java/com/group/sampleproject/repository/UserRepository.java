@@ -6,5 +6,9 @@ import com.group.sampleproject.entity.UserEntity;
 
 @Mapper
 public interface UserRepository {
-    UserEntity findByName(String name);
+    UserEntity findByName(String username);
+    UserEntity existsByUsername(String username);
+    UserEntity existsByEmail(String email);
+    void save(UserEntity user);
+    
 }

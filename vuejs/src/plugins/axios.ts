@@ -6,7 +6,7 @@ export function jwtInterceptor() {
   axios.interceptors.response.use((response) => {
     const newToken = response.headers["x-auth-token"];
     if (newToken) {
-      store.commit("saveToken", newToken);
+      store.dispatch("updateToken", newToken);
     }
 
     return response;

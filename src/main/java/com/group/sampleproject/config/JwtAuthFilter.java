@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.JWT;
@@ -21,16 +27,18 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.group.sampleproject.entity.Token;
 import com.group.sampleproject.service.TokenService;
 
-public class LoginFilter extends OncePerRequestFilter {
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
 
+    @Autowired
     private TokenService tokenService;
-
-    public LoginFilter(TokenService tokenService){
-        this.tokenService = tokenService;
-    }
+    @Autowired
+    UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        response.setStatus(401);
 
         // headerからTokenを取得する
         String authHeader = request.getHeader("X-AUTH-TOKEN");
@@ -45,7 +53,6 @@ public class LoginFilter extends OncePerRequestFilter {
         // Tokenの検証と認証を行う
         String username = JWT.decode(token).getClaim("username").asString();
         DecodedJWT decodedJWT = null;
-
         try{
             decodedJWT = JWT.require(Algorithm.HMAC256("secret")).build().verify(token);
 
@@ -59,35 +66,33 @@ public class LoginFilter extends OncePerRequestFilter {
 
             //tokenでrefreshTokenを検索
             Token tokenEntitity = tokenService.findByToken(token);
-            String refreshToken = tokenEntitity.getRefreshToken();
+            if (tokenEntitity == null) return;
 
+            String refreshToken = tokenEntitity.getRefreshToken();
+            Date a = JWT.decode(refreshToken).getExpiresAt();
             //refreshTokenの検証
             decodedJWT = JWT.require(Algorithm.HMAC256("secret")).build().verify(refreshToken);
 
-            Calendar cal = Calendar.getInstance();
-
-            cal.setTime(new Date());
-            cal.add(Calendar.MINUTE, 1);
-            Date tokenExTime = cal.getTime();
-            cal.add(Calendar.DATE, 1);
-            Date refreshTokenExTime = cal.getTime();
+            Map<String,String> tokens = tokenService.createNewTokens(username);
+            String newToken = tokens.get("token");     
+            refreshToken = tokens.get("refreshToken");     
             
-            // // トークンの作成
-            String newToken = tokenService.generateToken(username, tokenExTime);
-            // // リフレッシュトークンの作成
-            refreshToken = tokenService.generateToken(username, refreshTokenExTime);
-
-            //古いtokenを削除し、新しいrefreshTokenを保存
+            //古いtokenを削除
             tokenService.deleteToken(tokenEntitity);
-            Token newTokenEntity = new Token(newToken, refreshToken);
-            tokenService.createToken(newTokenEntity);
 
             response.setHeader("X-AUTH-TOKEN", newToken); // tokeをX-AUTH-TOKENというKeyにセットする
-            response.setStatus(200);
+            
         }
 
+        response.setStatus(200);
+
         // ログイン状態を設定する
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username,null,new ArrayList<>()));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,null,new ArrayList<>());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         filterChain.doFilter(request,response);
     }
 }

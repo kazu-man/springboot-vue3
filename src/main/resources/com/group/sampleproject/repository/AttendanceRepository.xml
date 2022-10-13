@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.group.sampleproject.repository.AttendanceRepository">
+
+    <select id="findById" resultMap="attendanceResultMap">
+
+        SELECT
+            a.id as attendance_id,
+            a.start_at as attendance_start_at,
+            a.finish_at as attendance_finish_at,
+            a.user_id as attendance_user_id,
+            a.comment as attendance_comment,
+            a.title as attendance_title,
+            a.background_color as attendance_background_color,
+            ta.id as tag_attendance_id,
+            ta.attendance_id as tag_attendance_tag_attendance_id,
+            ta.tag_id as tag_attendance_tag_id,
+            t.id as tag_id,
+            t.tag_name as tag_name
+        FROM attendances a
+        LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
+        LEFT JOIN tags t ON t.id = ta.tag_id
+        WHERE a.id = #{id};
+
+    </select>
+
+    <update id="updateAttendance">
+        UPDATE attendances SET 
+            start_at = #{startAt},
+            finish_at = #{finishAt},
+            comment = #{comment},
+            title = #{title},
+            background_color = #{backgroundColor}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="createAttendance">
+        INSERT INTO attendances
+            (start_at,finish_at,comment,user_id,title,background_color)
+        VALUES
+            (#{startAt},#{finishAt},#{comment},#{userEntity.id},#{title},#{backgroundColor});
+    </insert>
+
+    <resultMap id="attendanceResultMap" type="com.group.sampleproject.entity.AttendanceEntity">
+        <id property="id" column="attendance_id"/>
+        <result property="startAt" column="attendance_start_at"/> 
+        <result property="finishAt" column="attendance_finish_at"/> 
+        <result property="comment" column="attendance_comment"/> 
+        <result property="title" column="attendance_title"/> 
+        <result property="backgroundColor" column="attendance_background_color"/> 
+        
+        <association property="tagEntityList" resultMap="tagResultMap" />
+
+    </resultMap>
+
+    <resultMap id="tagResultMap" type="com.group.sampleproject.entity.TagEntity">
+        <id property="id" column="tag_id"/>
+        <result property="tagName" column="tag_name"/> 
+    </resultMap>
+
+
+    <select id="findByUserId" resultMap="attendanceResultMap">
+        SELECT
+            a.id as attendance_id,
+            a.start_at as attendance_start_at,
+            a.finish_at as attendance_finish_at,
+            a.user_id as attendance_user_id,
+            a.comment as attendance_comment,
+            a.title as attendance_title,
+            a.background_color as attendance_background_color,
+            ta.id as tag_attendance_id,
+            ta.attendance_id as tag_attendance_tag_attendance_id,
+            ta.tag_id as tag_attendance_tag_id,
+            t.id as tag_id,
+            t.tag_name as tag_name
+        FROM users u
+        LEFT JOIN attendances as a ON u.id = a.user_id
+        LEFT JOIN tag_attendances ta ON a.id = ta.attendance_id
+        LEFT JOIN tags t ON t.id = ta.tag_id
+        WHERE u.id = #{userId};
+    </select>
+
+</mapper>

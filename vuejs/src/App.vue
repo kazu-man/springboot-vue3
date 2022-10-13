@@ -2,7 +2,9 @@
   <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
-    <router-link to="/login">Login</router-link>
+    <router-link to="/login">Login</router-link> |
+    <router-link to="/signUp">SignUp</router-link> |
+    <router-link to="/attendance">Attendance</router-link> |
   </nav>
   <router-view />
 </template>
@@ -15,10 +17,12 @@ export default defineComponent({
   setup() {
     const { cookies } = useCookies();
     const store = useStore();
-    //cookieに保存されているtokenを取り出す
+    //cookieに保存されているtoken,userを取り出す
     onMounted(() => {
       let tokenInCookie = cookies.get("token");
-      store.commit("saveToken", tokenInCookie);
+      store.commit("updateToken", tokenInCookie);
+      let userInCookie = cookies.get("loginUser");
+      store.commit("updateLoginUser", userInCookie);
     });
   },
 });

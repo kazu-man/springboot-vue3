@@ -1,6 +1,9 @@
 package com.group.sampleproject.service;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,11 +32,51 @@ public class TokenService {
         tokenRepository.createToken(token);
 
     }
+
     public void deleteToken(Token token){
         tokenRepository.deleteToken(token);
     }
+
     public Token findByToken(String token){
         return tokenRepository.findByToken(token);
+    }
+
+    public Date getDatePlusMin(int min){
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(new Date());
+        cal.add(Calendar.MINUTE, min);
+        return cal.getTime();
+    }
+
+
+    
+    /** 
+     * ユーザーネームから新しいtoken/refreshtokenを生成保存
+     * @param username
+     * @return Map<String, String>
+     */
+    public Map<String,String> createNewTokens(String username){
+
+        // トークンの期限を取得
+        Date tokenExTime = getDatePlusMin(1);
+        Date refreshTokenExTime = getDatePlusMin(60);
+
+        // // トークンの作成
+        String token = generateToken(username, tokenExTime);
+        // // リフレッシュトークンの作成
+        String refreshToken = generateToken(username, refreshTokenExTime);
+                
+        //refreshToken　の保存
+        Token newTokenEntity = new Token(token, refreshToken);
+        createToken(newTokenEntity);    
+        
+        Map<String,String> result = new HashMap<>();
+        result.put("token",token);
+        result.put("refreshToken",refreshToken);
+        return result;
+            
     }
     
     
