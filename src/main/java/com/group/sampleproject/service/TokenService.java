@@ -13,7 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.group.sampleproject.entity.Token;
 import com.group.sampleproject.repository.TokenRepository;
 
-@Service
+@Service(value="myTokenService")
 public class TokenService {
 
     @Autowired

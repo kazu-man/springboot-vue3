@@ -55,7 +55,7 @@ public class SampleController {
     }
     
     @GetMapping("/api/test")
-    public String test(){
+    public String test(@AuthenticationPrincipal CustomUserDetail loginUser){
         return "認証が成功しています";
     }	
 
@@ -66,12 +66,12 @@ public class SampleController {
      * @param user
      * @return List<CalendarEventModel>
      */
-    @PostMapping("/api/attendanceByUserId")
-    public List<CalendarEventModel> attendanceByUserId(@AuthenticationPrincipal CustomUserDetail loginUser,@RequestBody UserEntity user){
+    @GetMapping("/api/attendance")
+    public List<CalendarEventModel> attendanceByUserId(@AuthenticationPrincipal CustomUserDetail loginUser){
 
         List<CalendarEventModel> calendarList = new ArrayList<>();
         
-        List<AttendanceEntity> attendanceList = attendanceRepository.findByUserId(user.getId());
+        List<AttendanceEntity> attendanceList = attendanceRepository.findByUserId(loginUser.getUserEntity().getId());
         //データが見つからない場合、1件目がnullのリストを返されるので対策
         attendanceList.removeAll(Collections.singleton(null));  
 

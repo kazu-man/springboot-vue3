@@ -2,8 +2,6 @@ package com.group.sampleproject.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.FilterChain;
@@ -12,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,16 +37,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        response.setStatus(401);
-
+        
         // headerからTokenを取得する
         String authHeader = request.getHeader("X-AUTH-TOKEN");
-
+        
         //　チェック処理
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
             return;
         }
+        
+        response.setStatus(403);
         String token = authHeader.substring(7);
 
         // Tokenの検証と認証を行う
@@ -69,7 +69,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (tokenEntitity == null) return;
 
             String refreshToken = tokenEntitity.getRefreshToken();
-            Date a = JWT.decode(refreshToken).getExpiresAt();
             //refreshTokenの検証
             decodedJWT = JWT.require(Algorithm.HMAC256("secret")).build().verify(refreshToken);
 

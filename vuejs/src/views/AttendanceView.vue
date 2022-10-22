@@ -12,9 +12,6 @@ import Calendar from "../components/Calendar.vue";
 const store = useStore();
 
 let attendData: Ref<CalendarEvents[]> = ref<CalendarEvents[]>([]);
-const data = {
-  id: store.getters.getUserId,
-};
 
 //@RequestParam String id, @RequestParam String name で受けたい場合はFormDataを使う
 // const form = new FormData();
@@ -27,7 +24,7 @@ const getAttendData = () => {
     "Content-Type": "application/json",
   };
   axios
-    .post("http://localhost:8080/api/attendanceByUserId", data, {
+    .get("http://localhost:8080/api/attendance", {
       headers: headers,
     })
     .then((res) => {
